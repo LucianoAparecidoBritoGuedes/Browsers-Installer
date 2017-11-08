@@ -1,0 +1,446 @@
+#!/bin/bash
+
+#Instalador de Navegadores
+#Criado por Luciano Brito
+#E-mail: luciobrito2012@gmail.com
+
+#Respostas
+sim="s"
+Sim="S"
+
+if [ -e '/usr/bin/gksu' ]
+then
+    clear
+else
+    echo -e '                                    \e[31;1m' ATENÇÃO!' \e[m'
+    echo "                                     ********"
+    echo ""
+    echo "Pacote GKSU Não está Instalado!"
+    echo "A Execução deste script só poderá continuar se o pacote 'GKSU' estiver Instalado!"
+    echo "Você pode fazer a instalação agora, caso contrário, o script será encerrado."
+    echo ""
+    echo ""
+    echo ""
+    echo "Você deseja realizar a instalação do gksu?"
+    echo -n "[Digite s/n]: "
+    read resp0
+
+    if [ "$resp0" = "$sim" ] || [ "$resp0" = "$Sim" ]
+    then
+        clear
+        echo "Instalando GKSU"
+        echo "***************"
+        echo ""
+        sudo apt install gksu -y
+        echo ""
+        echo ""
+    else
+        exit 0
+    fi
+    clear
+fi
+
+cd /home/$USER
+
+clear
+echo "********************************************************************"
+echo "*                                                                  *"
+echo "*                 Instalador de Navegadores                        *"
+echo "*                                                                  *"
+echo "********************************************************************"
+echo
+echo
+echo "Este Script Shell possibilita a instalação dos navegadores:"
+echo
+echo "==> Mozilla Firefox"
+echo "==> Google Chrome"
+echo "==> Opera"
+echo "==> Chromium"
+echo
+echo
+echo "Você Deseja Instalar Algum Navegador?"
+echo -n "[Digite s/n]: "; read resp0
+
+if [ "$resp0" = "$sim" ] || [ "$resp0" = "$Sim" ]
+then
+    senha1=`gksu --print-pass --message "Requisição [sudo]! Por favor, digite a senha de Super Usuário:"`
+    echo
+    echo "$senha1" | sudo -S clear
+else
+    for((i = 5; i >= 0; i--))
+    do
+        clear
+        echo "**********************************************************"
+        echo "*                       Creditos:                        *"
+        echo "*                                                        *"
+        echo "*        Este Script foi Criado Por LUCIANO BRITO.       *"
+        echo "*                                                        *"
+        echo "**********************************************************"
+        echo ""
+        echo "Contate-nos pelo E-mail: luciobrito2012@gmail.com"
+        echo "Assista também nossos vídeos no You Tube acessando o Canal Live Informática."
+        echo
+        echo
+        echo
+        echo "Este Script Será Finalizado em $i Segundos..."
+        sleep 1
+    done
+    exit 0
+fi
+
+function menu()
+{
+    clear
+    echo "********************************************************************"
+    echo "*                                                                  *"
+    echo "*                 Instalador de Navegadores                        *"
+    echo "*                                                                  *"
+    echo "********************************************************************"
+    echo
+    echo
+    echo
+    echo "Qual é o Navegador que Você Deseja Instalar?"
+    echo
+    echo -e '\e[31;1m [' 1 '] \e[m Firefox. ----------------- (Open Source)'
+    echo -e '\e[31;1m [' 2 '] \e[m Chrome. ------------------ (Proprietário)'
+    echo -e '\e[31;1m [' 3 '] \e[m Opera. ------------------- (Proprietário)'
+    echo -e '\e[31;1m [' 4 '] \e[m Chromium. ---------------- (Open Source)'
+    echo -e '\e[31;1m [' 5 '] \e[m Checklist. --------------- (Confere a Instação)'
+    echo -e '\e[31;1m [' 0 '] \e[m Sair. -------------------- (Sai do Script)'
+    echo
+    if [ "$1" ]; then echo -n "Escolha uma opção e pressione ENTER: " ; fi
+}
+
+#Funções do Instalador
+function _funcoes
+{
+    clear
+    while true
+    do
+        menu normal
+        read resp
+        echo
+        echo
+        case "$resp" in
+        1) Firefox ;;
+        2) Chrome ;;
+        3) Opera ;;
+        4) Chromium ;;
+        5) Checklist ;;
+        0) Sair ;;
+        *) Desconhecida ;;
+        esac
+    done
+}
+
+#Instalação do Firefox
+Firefox()
+{
+clear
+echo "Instalando Firefox"
+echo "******************"
+echo
+if ! [ -x /usr/bin/firefox ]
+then
+    echo "$senha1" | sudo -S add-apt-repository ppa:mozillateam/firefox-next -y
+    echo "$senha1" | sudo -S apt update
+    echo "$senha1" | sudo -S apt install firefox -y
+    echo "$senha1" | sudo -S apt install -f -y --force-yes
+    echo
+    if [ -x /usr/bin/firefox ]
+    then
+        echo "==> Firefox Está Instalado!"
+        echo "==> Versão: `dpkg -s firefox | grep Version --color=never | cut -c10- | cut -d+ -f1`"
+    else
+        echo "xxx> O Firefox Não Foi Instalado!"
+    fi
+else
+    echo "==> O Firefox Já Está Instalado!"
+    echo "==> Versão: `dpkg -s firefox | grep Version --color=never | cut -c10- | cut -d+ -f1`"
+    echo
+    echo
+    echo "Você Deseja Atualizá-lo?"
+    echo -n "[Digite s/n]: "
+    read resp0
+    echo
+
+    if [ "$resp0" = "$sim" ] || [ "$resp0" = "$Sim" ]
+    then
+        echo "O Firefox Será Atualizado!"
+        sleep 2
+        clear
+        echo "Atualizando Firefox"
+        echo "*******************"
+        echo
+        echo "$senha1" | sudo -S apt update && echo "$senha1" | sudo -S apt install firefox --only-upgrade -y
+        echo
+        echo "==> O Firefox Está Atualizado na Última Versão Disponível!"
+        echo "==> Versão: `dpkg -s firefox | grep Version --color=never | cut -c10- | cut -d+ -f1`"
+    else
+        echo "O Firefox Não Será Atualizado!"
+        sleep 2
+    fi
+fi
+echo
+echo
+echo
+echo "Pressione ENTER para retornar ao Menu de Navegadores!"
+read
+}
+
+#Instalação do Chrome
+Chrome()
+{
+clear
+echo "Instalando Google Chrome"
+echo "************************"
+echo
+if ! [ -x /usr/bin/google-chrome-stable ]
+then
+    if [ `uname -m` = 'x86_64' ] || [ `uname -m` = 'amd64' ]
+    then
+        echo "$senha1" | sudo -S apt install apt-transport-https -y
+        echo "$senha1" | sudo -S sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        echo "$senha1" | sudo -S wget -q https://dl.google.com/linux/linux_signing_key.pub -O- echo "senha1" | sudo -S apt-key add -
+        echo "$senha1" | sudo -S apt update
+        echo "$senha1" | sudo -S apt install google-chrome-stable -y
+        echo "$senha1" | sudo -S apt install -f -y --force-yes
+        echo
+        if [ -x /usr/bin/google-chrome-stable ]
+        then
+            echo "==> Google Chrome Está Instalado!"
+            echo "==> Versão: `dpkg -s google-chrome-stable | grep Version --color=never | cut -c10- | cut -d- -f1`"
+        else
+            echo "xxx> O Google Chrome Não Foi Instalado!"
+        fi
+    else
+        echo
+        echo "O Google Chrome Só Pode Ser Instalado em Sistemas de 64 bits!"
+        sleep 3
+    fi
+else
+    echo "==> O Google Chrome Já Está Instalado!"
+    echo "==> Versão: `dpkg -s google-chrome-stable | grep Version --color=never | cut -c10- | cut -d- -f1`"
+    echo
+    echo
+    echo "Você Deseja Atualizá-lo?"
+    echo -n "[Digite s/n]: "
+    read resp0
+    echo
+
+    if [ "$resp0" = "$sim" ] || [ "$resp0" = "$Sim" ]
+    then
+        echo "O Google Chrome Será Atualizado!"
+        sleep 2
+        clear
+        echo "Atualizando Google Chrome"
+        echo "*************************"
+        echo
+        echo "$senha1" | sudo -S apt update && echo "$senha1" | sudo -S apt install google-chrome-stable --only-upgrade -y
+        echo
+        echo "==> O Google Chrome Está Atualizado na Última Versão Disponível!"
+        echo "==> Versão: `dpkg -s google-chrome-stable | grep Version --color=never | cut -c10- | cut -d- -f1`"
+    else
+        echo "O Google Chrome Não Será Atualizado!"
+        sleep 2
+    fi
+fi
+echo
+echo
+echo
+echo "Pressione ENTER para retornar ao Menu de Navegadores!"
+read
+}
+ 
+#Instalação do Opera
+Opera()
+{
+clear
+echo "Instalando Opera"
+echo "****************"
+echo
+if ! [ -x /usr/bin/opera ]
+then
+    echo "$senha1" | sudo -S add-apt-repository 'deb https://deb.opera.com/opera-stable/ stable non-free'
+    echo "$senha1" | sudo -S wget -q https://deb.opera.com/archive.key -O- echo "$senha1" | sudo -S apt-key add -
+    echo "$senha1" | sudo -S apt update            
+    echo "$senha1" | sudo -S apt install opera-stable -y
+    echo "$senha1" | sudo -S apt install -f -y --force-yes
+    echo
+    if [ -x /usr/bin/opera ]
+    then
+        echo "==> Opera Está Instalado!"
+        echo "==> Versão: `dpkg -s opera-stable | grep Version --color=never | cut -c10-`"
+    else
+        echo "xxx> O Opera Não Foi Instalado!"
+    fi
+else
+    echo "==> O Opera Já Está Instalado!"
+    echo "==> Versão: `dpkg -s opera-stable | grep Version --color=never | cut -c10-`"
+    echo
+    echo
+    echo "Você Deseja Atualizá-lo?"
+    echo -n "[Digite s/n]: "
+    read resp0
+    echo
+
+    if [ "$resp0" = "$sim" ] || [ "$resp0" = "$Sim" ]
+    then
+        echo "O Opera Será Atualizado!"
+        sleep 2
+        clear
+        echo "Atualizando Opera"
+        echo "*****************"
+        echo
+        echo "$senha1" | sudo -S apt update && echo "$senha1" | sudo -S apt install opera-stable --only-upgrade -y
+        echo
+        echo "==> O Opera Está Atualizado na Última Versão Disponível!"
+        echo "==> Versão: `dpkg -s opera-stable | grep Version --color=never | cut -c10-`"
+    else
+        echo "O Opera Não Será Atualizado!"
+        sleep 2
+    fi
+fi
+echo
+echo
+echo
+echo "Pressione ENTER para retornar ao Menu de Navegadores!"
+read
+}
+
+#Instalação do Chromium
+Chromium()
+{
+clear
+echo "Instalando Chromium"
+echo "*******************"
+echo
+if ! [ -x /usr/bin/chromium-browser ]
+then
+    echo "$senha1" | sudo -S apt install chromium-browser -y
+    echo "$senha1" | sudo -S apt install -f -y --force-yes
+    echo
+    if [ -x /usr/bin/chromium-browser ]
+    then
+        echo "==> $var30 Está Instalado!"
+        echo "==> Versão: `dpkg -s chromium-browser | grep Version --color=never | cut -c10- | cut -d- -f1`"
+    else
+        echo "xxx> O $var30 Não Foi Instalado!"
+    fi
+else
+    echo "==> O Chromium Já Está Instalado!"
+    echo "==> Versão: `dpkg -s chromium-browser | grep Version --color=never | cut -c10- | cut -d- -f1`"
+    echo
+    echo
+    echo "Você Deseja Atualizá-lo?"
+    echo -n "[Digite s/n]: "
+    read resp0
+    echo
+
+    if [ "$resp0" = "$sim" ] || [ "$resp0" = "$Sim" ]
+    then
+        echo "O Chromium Será Atualizado!"
+        sleep 2
+        clear
+        echo "Atualizando Chromium"
+        echo "********************"
+        echo
+        echo "$senha1" | sudo -S apt update && echo "$senha1" | sudo -S apt install chromium-browser --only-upgrade -y
+        echo
+        echo "==> O Chromium Está Atualizado na Última Versão Disponível!"
+        echo "==> Versão: `dpkg -s chromium-browser | grep Version --color=never | cut -c10- | cut -d- -f1`"
+    else
+        echo "O Chromium Não Será Atualizado!"
+        sleep 2
+    fi
+fi
+echo
+echo
+echo
+echo "Pressione ENTER para retornar ao Menu de Navegadores!"
+read
+}
+
+#Confere a Instalação dos Navegadores
+Checklist()
+{
+clear
+echo "Checklist dos Navegadores"
+echo "*************************"
+echo
+
+#Firefox
+if [ -x /usr/bin/firefox ]
+then
+    echo -n "==> Firefox Está Instalado! ------------------- "
+    echo "Versão: `dpkg -s firefox | grep Version --color=never | cut -c10- | cut -d+ -f1`"
+else
+    echo "xxx> O Firefox Não Foi Instalado!"
+fi
+
+#Chrome
+if [ -x /usr/bin/google-chrome-stable ]
+then
+    echo -n "==> Chrome Está Instalado! -------------------- "
+    echo "Versão: `dpkg -s google-chrome-stable | grep Version --color=never | cut -c10- | cut -d- -f1`"
+else
+    echo "xxx> O Google Chrome Não Foi Instalado!"
+fi
+
+#Opera
+if [ -x /usr/bin/opera ]
+then
+    echo -n "==> Opera Está Instalado! --------------------- "
+    echo "Versão: `dpkg -s opera-stable | grep Version --color=never | cut -c10-`"
+else
+    echo "xxx> O Opera Não Foi Instalado!"
+fi
+
+#Chromium
+if [ -x /usr/bin/chromium-browser ]
+then
+    echo -n "==> Chromium Está Instalado! ------------------ "
+    echo "Versão: `dpkg -s chromium-browser | grep Version --color=never | cut -c10- | cut -d- -f1`"
+else
+    echo "xxx> O Chromium Não Foi Instalado!"
+fi
+
+echo
+echo
+echo
+echo "Pressione ENTER para retornar ao Menu de Navegadores!"
+read
+}
+
+#Sair do Instalador
+Sair()
+{
+for((i = 5; i >= 0; i--))
+do
+    clear
+    echo "**********************************************************"
+    echo "*                       Creditos:                        *"
+    echo "*                                                        *"
+    echo "*        Este Script foi Criado Por LUCIANO BRITO.       *"
+    echo "*                                                        *"
+    echo "**********************************************************"
+    echo ""
+    echo "Contate-nos pelo E-mail: luciobrito2012@gmail.com"
+    echo "Assista também nossos vídeos no You Tube acessando o Canal Live Informática."
+    echo
+    echo
+    echo
+    echo "Este Script Será Finalizado em $i Segundos..."
+    sleep 1
+done
+exit 0
+}
+
+
+function main()
+{
+    _funcoes
+}
+main "${@#}"
+
+exit
